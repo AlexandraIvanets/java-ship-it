@@ -197,7 +197,7 @@ public class DeliveryApp {
             System.out.println("Коробка пуста");
         } else {
             System.out.println("Содержимое коробки:");
-            int i = 11;
+            int i = 1;
             for (Parcel parcel : parcels) {
                 System.out.println(i + ". " + parcel.getDescription());
                 i++;
