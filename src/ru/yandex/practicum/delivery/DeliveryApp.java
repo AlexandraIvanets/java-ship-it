@@ -79,27 +79,28 @@ public class DeliveryApp {
         String deliveryAddress = readString("Введите адрес доставки:");
         int sendDay = readInt("Введите день отправки:");
 
-
-        switch (parcelType) {
+        Parcel newParcel = switch (parcelType) {
             case STANDARD_PARCEL -> {
                 StandardParcel standardParcel = new StandardParcel(description, weight, deliveryAddress, sendDay);
-                allParcels.add(standardParcel);
                 boxOfStandardParcels.addParcel(standardParcel);
+                yield standardParcel;
             }
             case PERISHABLE_PARCEL -> {
                 int timeToLive = readInt("Срок годности посылки:");
                 PerishableParcel perishableParcel = new PerishableParcel(description, weight, deliveryAddress, sendDay, timeToLive);
-                allParcels.add(perishableParcel);
                 boxOfPerishableParcels.addParcel(perishableParcel);
+                yield perishableParcel;
             }
             case FRAGILE_PARCEL -> {
                 FragileParcel fragileParcel = new FragileParcel(description, weight, deliveryAddress, sendDay);
                 trackableShipments.add(fragileParcel);
-                allParcels.add(fragileParcel);
                 boxOfFragileParcels.addParcel(fragileParcel);
+                yield fragileParcel;
             }
-        }
-        System.out.println(allParcels.getLast().getDescription() + " успешно добавлен(а)!");
+        };
+
+        allParcels.add(newParcel);
+        System.out.println(newParcel.getDescription() + " успешно добавлен(а)!");
         System.out.println(SEPARATOR_LINE);
     }
 
@@ -181,38 +182,26 @@ public class DeliveryApp {
 
         int number = readInt("Введите номер коробки:");
 
+        List<? extends Parcel> parcels;
         switch (number) {
-            case 1 -> {
-                List<StandardParcel> standardParcels = boxOfStandardParcels.getAllParcels();
-                if (standardParcels.isEmpty()) {
-                    System.out.println("Коробка пуста");
-                    break;
-                }
-                for (Parcel parcel : standardParcels) {
-                    System.out.println(parcel.getDescription());
-                }
+            case 1 -> parcels = boxOfStandardParcels.getAllParcels();
+            case 2 -> parcels = boxOfPerishableParcels.getAllParcels();
+            case 3 -> parcels = boxOfFragileParcels.getAllParcels();
+            default -> {
+                System.out.println("Неверный номер коробки");
+                return;
             }
-            case 2 -> {
-                List<PerishableParcel> perishableParcels = boxOfPerishableParcels.getAllParcels();
-                if (perishableParcels.isEmpty()) {
-                    System.out.println("Коробка пуста");
-                    break;
-                }
-                for (Parcel parcel : perishableParcels) {
-                    System.out.println(parcel.getDescription());
-                }
+        }
+
+        if (parcels.isEmpty()) {
+            System.out.println("Коробка пуста");
+        } else {
+            System.out.println("Содержимое коробки:");
+            int i = 11;
+            for (Parcel parcel : parcels) {
+                System.out.println(i + ". " + parcel.getDescription());
+                i++;
             }
-            case 3 -> {
-                List<FragileParcel> fragileParcels = boxOfFragileParcels.getAllParcels();
-                if (fragileParcels.isEmpty()) {
-                    System.out.println("Коробка пуста");
-                    break;
-                }
-                for (Parcel parcel : fragileParcels) {
-                    System.out.println(parcel.getDescription());
-                }
-            }
-            default -> System.out.println("Неверный номер");
         }
         System.out.println(SEPARATOR_LINE);
     }

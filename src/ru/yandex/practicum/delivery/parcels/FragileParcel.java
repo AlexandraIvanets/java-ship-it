@@ -2,7 +2,7 @@ package ru.yandex.practicum.delivery.parcels;
 
 public class FragileParcel extends Parcel implements Trackable {
     static final int PRICE_PER_KG = 4;
-    String location;
+    private String location;
 
     public FragileParcel(
             String description,
